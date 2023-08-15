@@ -1,9 +1,9 @@
 {
   "Title": "stalker",
   "Type": "addon",
-  "Org": "local",
+  "Org": "pukes",
   "Ident": "stalker",
-  "Tags": null,
+  "Tags": "it stalker follows hunt spooky",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
@@ -13,5 +13,13 @@
   "CodePath": "/code/",
   "PackageReferences": [],
   "EditorReferences": null,
-  "Metadata": {}
+  "Metadata": {
+    "CsProjName": "",
+    "PrimaryAsset": "pukes.stalker",
+    "PhysicsMins": "-1,-1,-1",
+    "PhysicsMaxs": "1,1,1",
+    "RenderMins": "-1,-1,-1",
+    "RenderMaxs": "-1,-1,-1",
+    "ParentPackage": "facepunch.sandbox"
+  }
 }
