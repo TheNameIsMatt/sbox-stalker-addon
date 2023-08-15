@@ -32,6 +32,15 @@ namespace Stalker
 
 		}
 
+		public override void ClientSpawn()
+		{
+			base.Spawn();
+			Log.Info( "Spawning" );
+			SetModel( "models/pyramid.vmdl" );
+			SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
+
+		}
+
 		[GameEvent.Tick.Server]
 		public void Update()
 		{
@@ -42,20 +51,25 @@ namespace Stalker
 
 		public Vector3 ChangePositionBasedOnTrackedEntity()
 		{
-			if ( !IsPlayerLookingAtStalker() )
+			
+			if ( IsPlayerLookingAtStalker() )
 			{
+				Log.Info( "Looking at" );
 				return Position;
 			}
-			return (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * 100;
+
+			return (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * 500;
 		}
 
 		public bool IsPlayerLookingAtStalker()
 		{
-			Vector3 directionToObject = Position - TrackedEntity.Position.Normal;
+
+			Vector3 directionToObject = Position - TrackedEntity.Position;
 			Vector3 forwardDirection = TrackedEntity.Rotation.Forward;
 			float angle = Vector3.Dot( directionToObject, forwardDirection);
 
-			return angle > 0 ? true : false;
+			Log.Info( angle );
+			return angle >= 0.1 ? true : false;
 
 		}
 
