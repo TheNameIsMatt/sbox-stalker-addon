@@ -9,9 +9,12 @@ using Sandbox;
 namespace Stalker
 {
 	[Spawnable]
+	
 	[Library("Stalkers"), Title("Stalker")]
 	public partial class Stalker : AnimatedEntity
 	{
+		[Net]
+		public Entity TrackedEntity { get; set; }
 		public Stalker()
 		{
 
@@ -19,30 +22,56 @@ namespace Stalker
 
 		public override void Spawn()
 		{
+			TrackedEntity = (Entity)ConsoleSystem.Caller.Pawn;
 			base.Spawn();
 			Log.Info( "Spawning" );
 			SetModel( "models/pyramid.vmdl" );
 			SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
-			Rotation = Rotation.LookAt( GetClosestPlayer( this ).Position );
 			Position = SetSpawnPosition();
+			Rotation = Rotation.LookAt( GetClosestPlayer( this ).Position );
 
-			
+		}
+
+		[GameEvent.Tick.Server]
+		public void Update()
+		{
+			Rotation = Rotation.LookAt(TrackedEntity.Position - Position);
+			Position = ChangePositionBasedOnTrackedEntity();	
+		}
+
+
+		public Vector3 ChangePositionBasedOnTrackedEntity()
+		{
+			if ( !IsPlayerLookingAtStalker() )
+			{
+				return Position;
+			}
+			return (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * 100;
+		}
+
+		public bool IsPlayerLookingAtStalker()
+		{
+			Vector3 directionToObject = Position - TrackedEntity.Position.Normal;
+			Vector3 forwardDirection = TrackedEntity.Rotation.Forward;
+			float angle = Vector3.Dot( directionToObject, forwardDirection);
+
+			return angle > 0 ? true : false;
+
 		}
 
 		public Entity GetClosestPlayer( Entity e )
 		{
-			Entity ClosestPlayer = new Entity();
-
 
 			foreach ( var player in Game.Clients )
 			{
-				if ( Vector3.DistanceBetween( e.Position, player.Pawn.Position ) < Vector3.DistanceBetween( e.Position, ClosestPlayer.Position ) )
+				if ( Vector3.DistanceBetween( e.Position, player.Pawn.Position ) < Vector3.DistanceBetween( e.Position, TrackedEntity.Position))
 				{
-					ClosestPlayer = (Entity)player.Pawn;
+					TrackedEntity = (Entity)player.Pawn;
 				}
 			}
+			TrackedEntity = TrackedEntity;
 
-			return ClosestPlayer;
+			return TrackedEntity;
 		}
 
 		public Vector3 SetSpawnPosition()
