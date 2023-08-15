@@ -3,7 +3,7 @@
   "Type": "addon",
   "Org": "pukes",
   "Ident": "stalker",
-  "Tags": "it stalker follows hunt spooky",
+  "Tags": "it stalker follows hunt spooky runtime npc entity sandbox",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
@@ -14,12 +14,19 @@
   "PackageReferences": [],
   "EditorReferences": null,
   "Metadata": {
-    "CsProjName": "",
-    "PrimaryAsset": "pukes.stalker",
+    "CsProjName": "pukes.stalker",
+    "PrimaryAsset": "Stalker.stalker",
     "PhysicsMins": "-1,-1,-1",
     "PhysicsMaxs": "1,1,1",
     "RenderMins": "-1,-1,-1",
     "RenderMaxs": "-1,-1,-1",
-    "ParentPackage": "facepunch.sandbox"
+    "ParentPackage": "facepunch.sandbox",
+    "Compiler": {
+      "RootNamespace": "Stalker",
+      "DefineConstants": "SANDBOX;ADDON;DEBUG",
+      "NoWarn": "1701;1702;1591;",
+      "References": [],
+      "DistinctReferences": []
+    }
   }
 }
