@@ -37,6 +37,8 @@ namespace Stalker
 		[Net]
 		public IList<SoundEvent> ListOfStalkerSounds { get; set; }
 
+
+		private Random RNG = new Random();
 		public override void Spawn()
 		{
 			StalkerLastObserved = 0;
@@ -78,23 +80,21 @@ namespace Stalker
 
 		private void PlayStalkerSounds()
 		{
-			if (LastStalkerSound > Utilities.GenerateRandomInt(100, 200 ) )
+			if (LastStalkerSound > RNG.Next(30, 100 ))
 			{
 				if (ListOfStalkerSounds.Count > 0)
 				{
-					PlaySound( ListOfStalkerSounds[Utilities.GenerateRandomInt( 0, ListOfStalkerSounds.Count - 1 )].ResourcePath );
+					PlaySound( ListOfStalkerSounds[RNG.Next( 0, ListOfStalkerSounds.Count - 1 )].ResourcePath );
 					LastStalkerSound = 0;
 				}
-
 			}
-			
 		}
 
 		private void SendStalkerMessage()
 		{
-			if ( LastStalkerMessage > Utilities.GenerateRandomInt( 25, 100 ) )
+			if ( LastStalkerMessage > RNG.Next( 25, 100 ) )
 			{
-				var message = StalkerMessage.All[Utilities.GenerateRandomInt( 0, StalkerMessage.All.Count - 1 )].Message;
+				var message = StalkerMessage.All[RNG.Next( 0, StalkerMessage.All.Count - 1 )].Message;
 
 				//The reason I am able to pass a To.Single() in the parameters for this, even though the actual method doesn't contain it a param for it, is because of some magic in the backend, by adding the [ClientRpc] field to the method,
 				// this means I am able to call it on the entity that we pass.
@@ -118,11 +118,11 @@ namespace Stalker
 				return Position;
 			}
 
-			if ( StalkerLastObserved > Utilities.GenerateRandomInt( 1, 3 ) )
+			if ( StalkerLastObserved > RNG.Next	( 1, 3 ) )
 			{
-				if ( StalkerLastTeleported > Utilities.GenerateRandomInt(2,5) )
+				if ( StalkerLastTeleported > RNG.Next(2,5) )
 				{
-					newPosition = (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * Utilities.GenerateRandomInt(50,500);
+					newPosition = (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * RNG.Next(50,500);
 					StalkerLastTeleported = 0;
 					if ( !EnsureEntityIsGrounded( newPosition ) )
 					{
