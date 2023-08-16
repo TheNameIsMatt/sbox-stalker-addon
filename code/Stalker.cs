@@ -9,12 +9,17 @@ using Sandbox;
 namespace Stalker
 {
 	[Spawnable]
-	
 	[Library("Stalkers"), Title("Stalker")]
 	public partial class Stalker : AnimatedEntity
 	{
 		[Net]
 		public Entity TrackedEntity { get; set; }
+
+		[Net]
+		TimeSince TimeSinceStalkerLastObserved { get; set; }
+
+		[Net]
+		TimeSince TimeSinceStalkerLastTeleported { get; set; }
 		public Stalker()
 		{
 
@@ -22,9 +27,11 @@ namespace Stalker
 
 		public override void Spawn()
 		{
+			TimeSinceStalkerLastObserved = 0;
+			TimeSinceStalkerLastTeleported = 0;
+
 			TrackedEntity = (Entity)ConsoleSystem.Caller.Pawn;
 			base.Spawn();
-			Log.Info( "Spawning" );
 			SetModel( "models/pyramid.vmdl" );
 			SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
 			Position = SetSpawnPosition();
@@ -35,7 +42,6 @@ namespace Stalker
 		public override void ClientSpawn()
 		{
 			base.Spawn();
-			Log.Info( "Spawning" );
 			SetModel( "models/pyramid.vmdl" );
 			SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
 
@@ -51,24 +57,44 @@ namespace Stalker
 
 		public Vector3 ChangePositionBasedOnTrackedEntity()
 		{
-			
+			Vector3 newPosition;
+
 			if ( IsPlayerLookingAtStalker() )
 			{
 				Log.Info( "Looking at" );
 				return Position;
 			}
 
-			return (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * 500;
+			if ( TimeSinceStalkerLastObserved > 2)
+			{
+				if ( TimeSinceStalkerLastTeleported > 5 )
+				{
+					newPosition = (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * 500;
+					TimeSinceStalkerLastTeleported = 0;
+				}
+				else
+				{
+					newPosition = Position;
+				}
+				return newPosition;
+			}
+
+			return Position;
 		}
 
 		public bool IsPlayerLookingAtStalker()
 		{
+			
 
 			Vector3 directionToObject = Position - TrackedEntity.Position;
-			Vector3 forwardDirection = TrackedEntity.Rotation.Forward;
+			Vector3 forwardDirection = TrackedEntity.Rotation.Forward.Normal;
 			float angle = Vector3.Dot( directionToObject, forwardDirection);
 
-			Log.Info( angle );
+			if ( angle >= 0.1 )
+			{
+				TimeSinceStalkerLastObserved = 0;
+			}
+
 			return angle >= 0.1 ? true : false;
 
 		}
