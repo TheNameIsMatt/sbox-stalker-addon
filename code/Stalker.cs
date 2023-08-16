@@ -9,7 +9,7 @@ using Sandbox;
 namespace Stalker
 {
 	[Spawnable]
-	[Library("Stalkers"), Title("Stalker")]
+	[Library( "Stalkers" ), Title( "Stalker" )]
 	public partial class Stalker : AnimatedEntity
 	{
 		[Net]
@@ -50,8 +50,8 @@ namespace Stalker
 		[GameEvent.Tick.Server]
 		public void Update()
 		{
-			Rotation = Rotation.LookAt(TrackedEntity.Position - Position);
-			Position = ChangePositionBasedOnTrackedEntity();	
+			Rotation = Rotation.LookAt( TrackedEntity.Position - Position );
+			Position = ChangePositionBasedOnTrackedEntity();
 		}
 
 
@@ -65,11 +65,11 @@ namespace Stalker
 				return Position;
 			}
 
-			if ( TimeSinceStalkerLastObserved > 2)
+			if ( TimeSinceStalkerLastObserved > 2 )
 			{
 				if ( TimeSinceStalkerLastTeleported > 5 )
 				{
-					newPosition = (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * 500;
+					newPosition = (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * Utilities.GenerateRandomInt(100,500);
 					TimeSinceStalkerLastTeleported = 0;
 				}
 				else
@@ -84,18 +84,18 @@ namespace Stalker
 
 		public bool IsPlayerLookingAtStalker()
 		{
-			
+
 
 			Vector3 directionToObject = Position - TrackedEntity.Position;
 			Vector3 forwardDirection = TrackedEntity.Rotation.Forward.Normal;
-			float angle = Vector3.Dot( directionToObject, forwardDirection);
+			float angle = Vector3.Dot( directionToObject, forwardDirection );
 
 			if ( angle >= 0.1 )
 			{
 				TimeSinceStalkerLastObserved = 0;
+				return true;
 			}
-
-			return angle >= 0.1 ? true : false;
+			return false;
 
 		}
 
@@ -104,7 +104,7 @@ namespace Stalker
 
 			foreach ( var player in Game.Clients )
 			{
-				if ( Vector3.DistanceBetween( e.Position, player.Pawn.Position ) < Vector3.DistanceBetween( e.Position, TrackedEntity.Position))
+				if ( Vector3.DistanceBetween( e.Position, player.Pawn.Position ) < Vector3.DistanceBetween( e.Position, TrackedEntity.Position ) )
 				{
 					TrackedEntity = (Entity)player.Pawn;
 				}
@@ -124,5 +124,6 @@ namespace Stalker
 			var newPosition = tr.EndPosition + Vector3.Down * this.Model.PhysicsBounds.Mins.z;
 			return newPosition;
 		}
+
 	}
 }
