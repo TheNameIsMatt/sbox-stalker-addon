@@ -22,6 +22,9 @@ namespace Stalker
 		public Entity TrackedEntity { get; set; }
 
 		[Net]
+		public bool IsGrounded { get; set; }
+
+		[Net]
 		TimeSince StalkerLastObserved { get; set; }
 
 		[Net]
@@ -44,7 +47,6 @@ namespace Stalker
 			//The reason it is IList is so it can be networked.
 			foreach ( var item in ResourceLibrary.GetAll<SoundEvent>().Where( x => x.ResourcePath.Contains( "stalksounds/" ) ))
 			{
-				Log.Info( item.ResourcePath );
 				ListOfStalkerSounds.Add( item );
 			}
 
@@ -122,6 +124,10 @@ namespace Stalker
 				{
 					newPosition = (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * Utilities.GenerateRandomInt(50,500);
 					StalkerLastTeleported = 0;
+					if ( !EnsureEntityIsGrounded( newPosition ) )
+					{
+						newPosition = (Vector3)NavMesh.GetClosestPoint( newPosition );
+					}
 				}
 				else
 				{
@@ -131,6 +137,29 @@ namespace Stalker
 			}
 
 			return Position;
+		}
+
+		private bool EnsureEntityIsGrounded( Vector3 currentPos )
+		{
+			string[] tags = new string[2];
+			tags[0] = "Ground";
+			tags[1] = "ground";
+			var tr = Trace.Ray( this.Position, this.Rotation.Down * 10 )
+				.UseHitboxes()
+				.WithAnyTags(tags)
+				.Run();
+
+			if ( tr.Entity is not null )
+			{
+				IsGrounded = true;
+				return true;
+			}
+			else
+			{
+				IsGrounded = false;
+				return false;
+			}
+
 		}
 
 		public bool IsPlayerLookingAtStalker()
