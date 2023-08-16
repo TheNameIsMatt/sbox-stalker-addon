@@ -16,10 +16,12 @@ namespace Stalker
 		public Entity TrackedEntity { get; set; }
 
 		[Net]
-		TimeSince TimeSinceStalkerLastObserved { get; set; }
+		TimeSince StalkerLastObserved { get; set; }
 
 		[Net]
-		TimeSince TimeSinceStalkerLastTeleported { get; set; }
+		TimeSince StalkerLastTeleported { get; set; }
+
+		TimeSince LastStalkerMessage { get; set; }
 		public Stalker()
 		{
 
@@ -27,9 +29,9 @@ namespace Stalker
 
 		public override void Spawn()
 		{
-			TimeSinceStalkerLastObserved = 0;
-			TimeSinceStalkerLastTeleported = 0;
-
+			StalkerLastObserved = 0;
+			StalkerLastTeleported = 0;
+			LastStalkerMessage = 0;
 			TrackedEntity = (Entity)ConsoleSystem.Caller.Pawn;
 			base.Spawn();
 			SetModel( "models/pyramid.vmdl" );
@@ -54,6 +56,25 @@ namespace Stalker
 			Position = ChangePositionBasedOnTrackedEntity();
 		}
 
+		[GameEvent.Tick.Server]
+		public void StalkerMessager()
+		{
+			if(LastStalkerMessage > Utilities.GenerateRandomInt( 25, 100 ) )
+			{
+				var message = StalkerMessage.All[Utilities.GenerateRandomInt( 0, StalkerMessage.All.Count - 1 )].Message;
+
+				//The reason I am able to pass a To.Single() in the parameters for this, even though the actual method doesn't contain it a param for it, is because of some magic in the backend, by adding the [ClientRpc] field to the method,
+				// this means I am able to call it on the entity that we pass.
+				SendMessage(To.Single(TrackedEntity),"Stalker", message);
+				LastStalkerMessage = 0;
+			}
+		}
+
+		[ClientRpc]
+		public static void SendMessage( string name, string message)
+		{
+			Chat.Current?.AddEntry( name, message );
+		}
 
 		public Vector3 ChangePositionBasedOnTrackedEntity()
 		{
@@ -61,16 +82,15 @@ namespace Stalker
 
 			if ( IsPlayerLookingAtStalker() )
 			{
-				Log.Info( "Looking at" );
 				return Position;
 			}
 
-			if ( TimeSinceStalkerLastObserved > 2 )
+			if ( StalkerLastObserved > Utilities.GenerateRandomInt( 1, 3 ) )
 			{
-				if ( TimeSinceStalkerLastTeleported > 5 )
+				if ( StalkerLastTeleported > Utilities.GenerateRandomInt(2,5) )
 				{
-					newPosition = (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * Utilities.GenerateRandomInt(100,500);
-					TimeSinceStalkerLastTeleported = 0;
+					newPosition = (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * Utilities.GenerateRandomInt(50,500);
+					StalkerLastTeleported = 0;
 				}
 				else
 				{
@@ -84,24 +104,20 @@ namespace Stalker
 
 		public bool IsPlayerLookingAtStalker()
 		{
-
-
 			Vector3 directionToObject = Position - TrackedEntity.Position;
 			Vector3 forwardDirection = TrackedEntity.Rotation.Forward.Normal;
 			float angle = Vector3.Dot( directionToObject, forwardDirection );
 
 			if ( angle >= 0.1 )
 			{
-				TimeSinceStalkerLastObserved = 0;
+				StalkerLastObserved = 0;
 				return true;
 			}
 			return false;
-
 		}
 
 		public Entity GetClosestPlayer( Entity e )
 		{
-
 			foreach ( var player in Game.Clients )
 			{
 				if ( Vector3.DistanceBetween( e.Position, player.Pawn.Position ) < Vector3.DistanceBetween( e.Position, TrackedEntity.Position ) )
