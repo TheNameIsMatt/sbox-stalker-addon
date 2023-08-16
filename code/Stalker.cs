@@ -12,6 +12,12 @@ namespace Stalker
 	[Library( "Stalkers" ), Title( "Stalker" )]
 	public partial class Stalker : AnimatedEntity
 	{
+
+		public Stalker()
+		{
+
+		}
+
 		[Net]
 		public Entity TrackedEntity { get; set; }
 
@@ -22,16 +28,26 @@ namespace Stalker
 		TimeSince StalkerLastTeleported { get; set; }
 
 		TimeSince LastStalkerMessage { get; set; }
-		public Stalker()
-		{
 
-		}
+		TimeSince LastStalkerSound { get; set; }
+
+		[Net]
+		public IList<SoundEvent> ListOfStalkerSounds { get; set; }
 
 		public override void Spawn()
 		{
 			StalkerLastObserved = 0;
 			StalkerLastTeleported = 0;
 			LastStalkerMessage = 0;
+
+			//In order to use the limited IEnumerable from ResourceLibrary, I have to iterate over it and store in a new IList variable, that way I can use all the functions I need
+			//The reason it is IList is so it can be networked.
+			foreach ( var item in ResourceLibrary.GetAll<SoundEvent>().Where( x => x.ResourcePath.Contains( "stalksounds/" ) ))
+			{
+				Log.Info( item.ResourcePath );
+				ListOfStalkerSounds.Add( item );
+			}
+
 			TrackedEntity = (Entity)ConsoleSystem.Caller.Pawn;
 			base.Spawn();
 			SetModel( "models/pyramid.vmdl" );
@@ -54,18 +70,33 @@ namespace Stalker
 		{
 			Rotation = Rotation.LookAt( TrackedEntity.Position - Position );
 			Position = ChangePositionBasedOnTrackedEntity();
+			SendStalkerMessage();
+			PlayStalkerSounds();
 		}
 
-		[GameEvent.Tick.Server]
-		public void StalkerMessager()
+		private void PlayStalkerSounds()
 		{
-			if(LastStalkerMessage > Utilities.GenerateRandomInt( 25, 100 ) )
+			if (LastStalkerSound > Utilities.GenerateRandomInt(100, 200 ) )
+			{
+				if (ListOfStalkerSounds.Count > 0)
+				{
+					PlaySound( ListOfStalkerSounds[Utilities.GenerateRandomInt( 0, ListOfStalkerSounds.Count - 1 )].ResourcePath );
+					LastStalkerSound = 0;
+				}
+
+			}
+			
+		}
+
+		private void SendStalkerMessage()
+		{
+			if ( LastStalkerMessage > Utilities.GenerateRandomInt( 25, 100 ) )
 			{
 				var message = StalkerMessage.All[Utilities.GenerateRandomInt( 0, StalkerMessage.All.Count - 1 )].Message;
 
 				//The reason I am able to pass a To.Single() in the parameters for this, even though the actual method doesn't contain it a param for it, is because of some magic in the backend, by adding the [ClientRpc] field to the method,
 				// this means I am able to call it on the entity that we pass.
-				SendMessage(To.Single(TrackedEntity),"Stalker", message);
+				SendMessage( To.Single( TrackedEntity ), "Stalker", message );
 				LastStalkerMessage = 0;
 			}
 		}
