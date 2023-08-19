@@ -2,11 +2,11 @@
   "UI": false,
   "Volume": "1.00,1.00,0",
   "Pitch": "1.00,1.00,0",
-  "Decibels": 130,
+  "Decibels": 115,
   "SelectionMode": "Random",
   "Sounds": [
-    "stalksounds/menacing01.vsnd"
+    "stalksounds/menacing03.vsnd"
   ],
-  "MaximumDistance": 3867.0361,
-  "MinimumDistance": 193.3518
+  "MaximumDistance": 3033.086,
+  "MinimumDistance": 151.6543
 }

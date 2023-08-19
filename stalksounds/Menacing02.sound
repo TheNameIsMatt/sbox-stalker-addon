@@ -5,7 +5,7 @@
   "Decibels": 130,
   "SelectionMode": "Random",
   "Sounds": [
-    "stalksounds/menacing01.vsnd"
+    "stalksounds/menacing02.vsnd"
   ],
   "MaximumDistance": 3867.0361,
   "MinimumDistance": 193.3518

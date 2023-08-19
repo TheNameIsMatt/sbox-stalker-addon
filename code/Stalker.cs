@@ -33,6 +33,7 @@ namespace Stalker
 		TimeSince LastStalkerMessage { get; set; }
 
 		TimeSince LastStalkerSound { get; set; }
+		
 
 		[Net]
 		public IList<SoundEvent> ListOfStalkerSounds { get; set; }
@@ -64,7 +65,7 @@ namespace Stalker
 		public override void ClientSpawn()
 		{
 			base.Spawn();
-			SetModel( "models/pyramid.vmdl" );
+			SetModel( "models/gnome_stalker/stalker01.vmdl" );
 			SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
 
 		}
@@ -80,11 +81,11 @@ namespace Stalker
 
 		private void PlayStalkerSounds()
 		{
-			if (LastStalkerSound > RNG.Next(30, 100 ))
+			if (LastStalkerSound > RNG.Next(20, 100))
 			{
 				if (ListOfStalkerSounds.Count > 0)
 				{
-					PlaySound( ListOfStalkerSounds[RNG.Next( 0, ListOfStalkerSounds.Count - 1 )].ResourcePath );
+					PlaySound( ListOfStalkerSounds[RNG.Next( 0, ListOfStalkerSounds.Count)].ResourcePath );
 					LastStalkerSound = 0;
 				}
 			}
@@ -92,7 +93,7 @@ namespace Stalker
 
 		private void SendStalkerMessage()
 		{
-			if ( LastStalkerMessage > RNG.Next( 25, 100 ) )
+			if ( LastStalkerMessage > RNG.Next( 30, 100 ) )
 			{
 				var message = StalkerMessage.All[RNG.Next( 0, StalkerMessage.All.Count - 1 )].Message;
 
@@ -124,7 +125,7 @@ namespace Stalker
 				{
 					newPosition = (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * RNG.Next(50,500);
 					StalkerLastTeleported = 0;
-					if ( !EnsureEntityIsGrounded( newPosition ) )
+					if ( !EnsureEntityIsGrounded( newPosition ) && NavMesh.IsLoaded )
 					{
 						newPosition = (Vector3)NavMesh.GetClosestPoint( newPosition );
 					}

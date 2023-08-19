@@ -14,12 +14,24 @@
 						remaps = 
 						[
 							{
-								from = "cube.vmat"
-								to = "textures/hdr/autumn_park_2k.vmat"
+								from = "citizen_skin.001.vmat"
+								to = "models/citizen/skin/citizen_skin.vmat"
+							},
+							{
+								from = "citizen_skin.002.vmat"
+								to = "models/citizen/skin/citizen_skin08.vmat"
+							},
+							{
+								from = "citizen_skin.vmat"
+								to = "models/citizen/skin/citizen_skin08.vmat"
+							},
+							{
+								from = "gnome.vmat"
+								to = "models/gnome_stalker/textures/stalker01.vmat"
 							},
 						]
-						use_global_default = true
-						global_default_material = "models/citizen_clothes/shirt/v_neck_tshirt/textures/blue_v_neck_shirt.vmat"
+						use_global_default = false
+						global_default_material = ""
 					},
 				]
 			},
@@ -28,26 +40,13 @@
 				children = 
 				[
 					{
-						_class = "PhysicsMeshFile"
-						name = "pyramid"
+						_class = "PhysicsShapeBox"
 						parent_bone = ""
 						surface_prop = "default"
 						collision_tags = "solid"
-						recenter_on_parent_bone = false
-						offset_origin = [ 0.0, 0.0, 0.0 ]
-						offset_angles = [ 0.0, 0.0, 0.0 ]
-						align_origin_x_type = "None"
-						align_origin_y_type = "None"
-						align_origin_z_type = "None"
-						filename = "models/pyramid.fbx"
-						import_scale = 1.0
-						maxMeshVertices = 0
-						qemError = 0.0
-						import_filter = 
-						{
-							exclude_by_default = false
-							exception_list = [  ]
-						}
+						origin = [ 0.327266, -0.026567, 10.418365 ]
+						angles = [ 0.0, 0.0, 0.0 ]
+						dimensions = [ 5.478934, 8.110542, 20.017197 ]
 					},
 				]
 			},
@@ -57,10 +56,10 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						filename = "models/pyramid.fbx"
+						filename = "models/gnome_stalker/stalkergnome.fbx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
-						import_scale = 1.0
+						import_scale = 0.3937
 						align_origin_x_type = "None"
 						align_origin_y_type = "None"
 						align_origin_z_type = "None"
@@ -70,7 +69,16 @@
 							exclude_by_default = true
 							exception_list = 
 							[
-								"Cube",
+								"Mesh_016",
+								"Mesh_017",
+								"Mesh_018",
+								"Circle_004",
+								"Plane_002",
+								"Vert_002",
+								"Cone_002",
+								"Circle_005",
+								"Mesh_019",
+								"Mesh_020",
 							]
 						}
 					},
