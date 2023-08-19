@@ -67,14 +67,13 @@ namespace Stalker
 		{
 			base.Spawn();
 			SetModel( "models/gnome_stalker/stalker01.vmdl" );
-			SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
+			SetupPhysicsFromModel( PhysicsMotionType.Dynamic);
 
 		}
 
 		[GameEvent.Tick.Server]
 		public void Update()
 		{
-			Rotation = Rotation.LookAt( TrackedEntity.Position - Position );
 			Position = ChangePositionBasedOnTrackedEntity();
 			SendStalkerMessage();
 			PlayStalkerSounds();
@@ -135,6 +134,7 @@ namespace Stalker
 				{
 					newPosition = Position;
 				}
+				Rotation = Rotation.LookAt( TrackedEntity.Position - Position );
 				return newPosition;
 			}
 

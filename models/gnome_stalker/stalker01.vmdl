@@ -36,21 +36,6 @@
 				]
 			},
 			{
-				_class = "PhysicsShapeList"
-				children = 
-				[
-					{
-						_class = "PhysicsShapeBox"
-						parent_bone = ""
-						surface_prop = "default"
-						collision_tags = "solid"
-						origin = [ 0.327266, -0.026567, 10.418365 ]
-						angles = [ 0.0, 0.0, 0.0 ]
-						dimensions = [ 5.478934, 8.110542, 20.017197 ]
-					},
-				]
-			},
-			{
 				_class = "RenderMeshList"
 				children = 
 				[
@@ -81,6 +66,21 @@
 								"Mesh_020",
 							]
 						}
+					},
+				]
+			},
+			{
+				_class = "PhysicsShapeList"
+				children = 
+				[
+					{
+						_class = "PhysicsShapeBox"
+						parent_bone = ""
+						surface_prop = "default"
+						collision_tags = "solid"
+						origin = [ 0.212673, 0.0, 12.966621 ]
+						angles = [ 0.0, 0.0, 0.0 ]
+						dimensions = [ 6.173332, 10.0, 25.244499 ]
 					},
 				]
 			},
