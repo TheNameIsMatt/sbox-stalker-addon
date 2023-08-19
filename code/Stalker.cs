@@ -58,7 +58,6 @@ namespace Stalker
 			base.Spawn();
 			SetModel( "models/gnome_stalker/stalker01.vmdl" );
 			SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
-			Position = SetSpawnPosition();
 			Rotation = Rotation.LookAt( GetClosestPlayer( this ).Position );
 
 		}
@@ -190,17 +189,6 @@ namespace Stalker
 			TrackedEntity = TrackedEntity;
 
 			return TrackedEntity;
-		}
-
-		public Vector3 SetSpawnPosition()
-		{
-			var owner = TrackedEntity as Player;
-			var tr = Trace.Ray( owner.EyePosition, owner.EyePosition + owner.EyeRotation.Forward * 500 )
-				.UseHitboxes()
-				.Ignore( owner )
-				.Run();
-			var newPosition = tr.EndPosition + Vector3.Down * this.Model.PhysicsBounds.Mins.z;
-			return newPosition;
 		}
 
 	}
