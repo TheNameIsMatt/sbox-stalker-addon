@@ -3,7 +3,7 @@
   "Type": "addon",
   "Org": "pukes",
   "Ident": "stalker",
-  "Tags": "it stalker follows hunt spooky runtime npc entity sandbox",
+  "Tags": "it stalker follows hunt spooky runtime entity sandbox",
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
@@ -17,7 +17,7 @@
   "EditorReferences": null,
   "Metadata": {
     "CsProjName": "pukes.stalker",
-    "PrimaryAsset": "Stalker.stalker",
+    "PrimaryAsset": "Stalker.Stalker",
     "PhysicsMins": "-1,-1,-1",
     "PhysicsMaxs": "1,1,1",
     "RenderMins": "-1,-1,-1",

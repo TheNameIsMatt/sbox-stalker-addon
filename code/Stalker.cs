@@ -53,9 +53,10 @@ namespace Stalker
 				ListOfStalkerSounds.Add( item );
 			}
 
-			TrackedEntity = (Entity)ConsoleSystem.Caller.Pawn;
+			int RandomPlayer = RNG.Next( 0, Game.Clients.Count );
+			TrackedEntity = (Entity)Game.Clients.ElementAt(RandomPlayer).Pawn;
 			base.Spawn();
-			SetModel( "models/pyramid.vmdl" );
+			SetModel( "models/gnome_stalker/stalker01.vmdl" );
 			SetupPhysicsFromModel( PhysicsMotionType.Dynamic );
 			Position = SetSpawnPosition();
 			Rotation = Rotation.LookAt( GetClosestPlayer( this ).Position );
@@ -81,7 +82,7 @@ namespace Stalker
 
 		private void PlayStalkerSounds()
 		{
-			if (LastStalkerSound > RNG.Next(20, 100))
+			if (LastStalkerSound > RNG.Next(50, 100))
 			{
 				if (ListOfStalkerSounds.Count > 0)
 				{
@@ -93,7 +94,7 @@ namespace Stalker
 
 		private void SendStalkerMessage()
 		{
-			if ( LastStalkerMessage > RNG.Next( 30, 100 ) )
+			if ( LastStalkerMessage > RNG.Next( 50, 100 ) )
 			{
 				var message = StalkerMessage.All[RNG.Next( 0, StalkerMessage.All.Count - 1 )].Message;
 
@@ -193,7 +194,7 @@ namespace Stalker
 
 		public Vector3 SetSpawnPosition()
 		{
-			var owner = ConsoleSystem.Caller?.Pawn as Player;
+			var owner = TrackedEntity as Player;
 			var tr = Trace.Ray( owner.EyePosition, owner.EyePosition + owner.EyeRotation.Forward * 500 )
 				.UseHitboxes()
 				.Ignore( owner )
