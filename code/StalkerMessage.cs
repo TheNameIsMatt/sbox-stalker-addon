@@ -24,16 +24,5 @@ namespace Stalker
 			}
 		}
 
-
-
-    [ConCmd.Admin("stalkermessage_all")]
-    private static void PrintAllGaslightMessages()
-    {
-        foreach (var message in All.OrderBy(x => x.Message))
-        {
-            Log.Info($"{message.Message}");
-        }
-    }
-
 	}
 }

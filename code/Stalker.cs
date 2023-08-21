@@ -73,9 +73,12 @@ namespace Stalker
 		[GameEvent.Tick.Server]
 		public void Update()
 		{
-			Position = ChangePositionBasedOnTrackedEntity();
+			if (TrackedEntity.Health > 0)
+				Position = ChangePositionBasedOnTrackedEntity();
+
 			SendStalkerMessage();
 			PlayStalkerSounds();
+			KillEntityIfLastObservedTimeTooGreat( TrackedEntity );
 		}
 
 		private void PlayStalkerSounds()
@@ -124,7 +127,7 @@ namespace Stalker
 				{
 					newPosition = (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * RNG.Next(50,500);
 					StalkerLastTeleported = 0;
-					if ( !EnsureEntityIsGrounded( newPosition ) && NavMesh.IsLoaded )
+					if ( !EnsureEntityIsGrounded( newPosition ) && NavMesh.IsLoaded && CheckMagnitudeOfClosestPoint(newPosition))
 					{
 						newPosition = (Vector3)NavMesh.GetClosestPoint( newPosition );
 					}
@@ -138,6 +141,19 @@ namespace Stalker
 			}
 
 			return Position;
+		}
+
+		/// <summary>
+		/// Used to determine if the magnitude of the stalker is too far away from a navmesh, if too far away, spawn behind using static distance (Won't work on slopes however)
+		/// </summary>
+		/// <param name="newPosition"></param>
+		/// <returns></returns>
+		private bool CheckMagnitudeOfClosestPoint(Vector3 newPosition)
+		{
+			if ( Vector3.DistanceBetween((Vector3)NavMesh.GetClosestPoint(newPosition), newPosition ) < 50) {
+				return true;
+			}
+			return false;
 		}
 
 		private bool EnsureEntityIsGrounded( Vector3 currentPos )
@@ -189,6 +205,19 @@ namespace Stalker
 			TrackedEntity = TrackedEntity;
 
 			return TrackedEntity;
+		}
+
+		public void KillEntityIfLastObservedTimeTooGreat(Entity e)
+		{
+			if ( StalkerLastObserved > 15 && e.Health > 0) 
+			{ 
+				e.Health = 0;
+				e.OnKilled();
+				Position = (TrackedEntity.Position) + TrackedEntity.Rotation.Backward * 15;
+				StalkerLastObserved = 0;
+				PlaySound( ListOfStalkerSounds[RNG.Next( 0, ListOfStalkerSounds.Count )].ResourcePath );
+				LastStalkerSound = 0;
+			}
 		}
 
 	}
